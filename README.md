@@ -108,7 +108,12 @@ go build -o bin/orion-dev cmd/main.go
 ```
 Fin.Orion.Dev/
 ├── 📁 bin/                           # Binário da aplicação
+│   ├── .gitkeep                      # Mantém a pasta vazia
 │   └── orion-dev                     # Binário da aplicação
+├── 📁 docs/                          # Documentação
+│   ├── CONVENTIONAL_COMMITS.md       # Conventional Commits
+│   ├── RELEASES.md                   # Releases
+│   └── TESTS.md                      # Testes
 ├── 📁 cmd/                           # Ponto de entrada da aplicação
 │   └── main.go                       # Arquivo principal
 ├── 📁 internal/                      # Código interno da aplicação
@@ -119,7 +124,11 @@ Fin.Orion.Dev/
 │   │   ├── stop.go                   # Comando stop
 │   │   ├── status.go                 # Comando status
 │   │   └── messages.go               # Comandos de mensagens
-│   ├── servicebus/                   # Cliente Service Bus
+│   ├── commitlint/                   # Commitlint
+│   │   └── validator.go              # Validador de commits
+│   ├── proxy/                        # Proxy Service Bus
+│   │   └── servicebus-proxy.go       # Proxy Service Bus
+│   ├── servicebus/                   # Service Bus
 │   │   └── client.go                 # Cliente Azure Service Bus
 │   └── utils/                        # Utilitários
 │       └── network.go                # Funções de rede
@@ -135,16 +144,30 @@ Fin.Orion.Dev/
 │   │   │   └── server.key            # Chave privada PostgreSQL
 │   │   ├── init-postgres.sql         # Script de inicialização
 │   │   └── postgres.conf             # Configuração PostgreSQL
-│   └── service-bus/
-│       └── config.json               # Configuração Service Bus
+│   ├── service-bus/
+│   │   ├── certs/                    # Certificados proxy Service Bus
+│   │   │   ├── .gitkeep              # Mantém a pasta vazia
+│   │   │   ├── servicebus-proxy.crt  # Certificado proxy Service Bus
+│   │   │   └── servicebus-proxy.key  # Chave privada proxy Service Bus
+│   │   └── config.json               # Configuração Service Bus
 ├── 📁 messages/                      # Arquivos JSON de teste
 │   ├── rec_payment_order_fail.json   # Mensagem de exemplo
 │   └── .gitkeep                      # Mantém a pasta vazia
+├── 📁 scripts/                       # Scripts shell
+│   ├── install-hooks.sh              # Instalação dos hooks
+│   ├── release.sh                    # Release
+│   └── tests.sh                      # Testes unitários
 ├── 📁 tests/                         # Testes unitários
+├── 📄 .editorconfig                  # EditorConfig
+├── 📄 .env                           # Variáveis de ambiente
+├── 📄 .env.example                   # Exemplo de variáveis de ambiente
+├── 📄 LICENSE                        # Licença
 ├── 📄 docker-compose.yml             # Orquestração Docker
-├── 📄 local.settings.json            # Configuração Orion Functions
 ├── 📄 go.mod                         # Dependências Go
 ├── 📄 go.sum                         # Checksums das dependências
+├── 📄 local.settings.json            # Configuração Orion Functions
+├── 📄 Makefile                       # Makefile
+├── 📄 README.md                      # README
 └── 📄 .gitignore                     # Arquivos ignorados
 ```
 
