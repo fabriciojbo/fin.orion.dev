@@ -99,29 +99,6 @@ go build -o bin/orion-dev cmd/main.go
 # 5. Testar funcionalidade
 ./bin/orion-dev check-messages
 ```
-
-### ⚠️ Importante: Proxy Service Bus
-
-Para executar comandos relacionados ao Service Bus (enviar, receber, verificar mensagens, filas e tópicos), é **necessário** rodar o proxy de redirecionamento de portas:
-
-```bash
-# Em um terminal separado, execute:
-./bin/orion-dev proxy
-```
-
-**Por que é necessário?**
-- A biblioteca do Service Bus para Go utiliza a porta **5671 (TLS)**
-- O Service Bus Emulator roda na porta **5672 (não-TLS)** por padrão
-- O proxy redireciona automaticamente as conexões da porta 5671 para 5672
-- Sem o proxy, os comandos de mensagens não funcionarão corretamente
-
-**Comandos que requerem o proxy:**
-- `./bin/orion-dev push-message`
-- `./bin/orion-dev check-messages`
-- `./bin/orion-dev check-queue`
-- `./bin/orion-dev check-topic`
-- `./bin/orion-dev list`
-
 ---
 
 ## 🔧 Configuração

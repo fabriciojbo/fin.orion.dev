@@ -65,7 +65,9 @@ func NewClient() (*Client, error) {
 // Close fecha a conexão do cliente
 func (c *Client) Close() error {
 	if c.client != nil {
-		return c.client.Close(context.TODO())
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		return c.client.Close(ctx)
 	}
 	return nil
 }
@@ -77,7 +79,11 @@ func (c *Client) TestConnection() error {
 	if err != nil {
 		return fmt.Errorf("erro ao testar conexão: %w", err)
 	}
-	defer func() { _ = sender.Close(context.TODO()) }()
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_ = sender.Close(ctx)
+	}()
 
 	fmt.Printf("✅ Conexão com Service Bus estabelecida com sucesso\n")
 	return nil
@@ -98,7 +104,11 @@ func (c *Client) SendMessageToQueue(queueName string, message *Message) error {
 	if err != nil {
 		return fmt.Errorf("erro ao criar sender: %w", err)
 	}
-	defer func() { _ = sender.Close(context.TODO()) }()
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_ = sender.Close(ctx)
+	}()
 	fmt.Printf("✅ Sender criado com sucesso\n")
 
 	sbMessage := &azservicebus.Message{
@@ -148,9 +158,15 @@ func (c *Client) ReceiveMessagesFromQueue(queueName string, maxMessages int) ([]
 	if err != nil {
 		return nil, fmt.Errorf("erro ao criar receiver: %w", err)
 	}
-	defer func() { _ = receiver.Close(context.TODO()) }()
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_ = receiver.Close(ctx)
+	}()
 
-	messages, err := receiver.ReceiveMessages(context.TODO(), maxMessages, nil)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	messages, err := receiver.ReceiveMessages(ctx, maxMessages, nil)
 	if err != nil {
 		return nil, fmt.Errorf("erro ao receber mensagens: %w", err)
 	}
@@ -189,9 +205,12 @@ func (c *Client) ReceiveMessagesFromQueue(queueName string, maxMessages int) ([]
 		result = append(result, message)
 
 		// Complete a mensagem
-		if err := receiver.CompleteMessage(context.TODO(), msg, nil); err != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		if err := receiver.CompleteMessage(ctx, msg, nil); err != nil {
+			cancel()
 			return nil, fmt.Errorf("erro ao completar mensagem: %w", err)
 		}
+		cancel()
 	}
 
 	return result, nil
@@ -203,7 +222,11 @@ func (c *Client) SendMessageToTopic(topicName string, message *Message) error {
 	if err != nil {
 		return fmt.Errorf("erro ao criar sender: %w", err)
 	}
-	defer func() { _ = sender.Close(context.TODO()) }()
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_ = sender.Close(ctx)
+	}()
 
 	// Converter mensagem para o formato do Azure Service Bus
 	body, err := json.Marshal(message.Body)
@@ -235,7 +258,9 @@ func (c *Client) SendMessageToTopic(topicName string, message *Message) error {
 		sbMessage.ApplicationProperties = message.Properties
 	}
 
-	return sender.SendMessage(context.TODO(), sbMessage, nil)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	return sender.SendMessage(ctx, sbMessage, nil)
 }
 
 // ReceiveMessagesFromTopic recebe mensagens de uma subscription de tópico
@@ -244,9 +269,15 @@ func (c *Client) ReceiveMessagesFromTopic(topicName, subscriptionName string, ma
 	if err != nil {
 		return nil, fmt.Errorf("erro ao criar receiver: %w", err)
 	}
-	defer func() { _ = receiver.Close(context.TODO()) }()
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_ = receiver.Close(ctx)
+	}()
 
-	messages, err := receiver.ReceiveMessages(context.TODO(), maxMessages, nil)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	messages, err := receiver.ReceiveMessages(ctx, maxMessages, nil)
 	if err != nil {
 		return nil, fmt.Errorf("erro ao receber mensagens: %w", err)
 	}
@@ -285,9 +316,12 @@ func (c *Client) ReceiveMessagesFromTopic(topicName, subscriptionName string, ma
 		result = append(result, message)
 
 		// Complete a mensagem
-		if err := receiver.CompleteMessage(context.TODO(), msg, nil); err != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		if err := receiver.CompleteMessage(ctx, msg, nil); err != nil {
+			cancel()
 			return nil, fmt.Errorf("erro ao completar mensagem: %w", err)
 		}
+		cancel()
 	}
 
 	return result, nil
