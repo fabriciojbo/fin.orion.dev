@@ -294,7 +294,6 @@ MSSQL_SA_PASSWORD="YOUR_MSSQL_SA_PASSWORD"
 # =============================================================================
 
 ./bin/orion-dev proxy          # Iniciar proxy TLS (5671 -> 5672)
-# ⚠️ Execute em terminal separado antes de usar comandos de mensagens
 
 # =============================================================================
 # COMANDOS DE MENSAGENS
@@ -397,11 +396,10 @@ GOOS=windows GOARCH=amd64 go build -o bin/orion-dev.exe cmd/main.go
 ./bin/orion-dev status
 
 # =============================================================================
-# COMANDOS DE MENSAGENS (REQUER PROXY ATIVO)
+# COMANDOS DE MENSAGENS
 # =============================================================================
 
-# Executar comandos de mensagens (requer proxy ativo)
-./bin/orion-dev proxy                    # Iniciar proxy (terminal separado)
+# Executar comandos de mensagens
 ./bin/orion-dev push-message <fila> <arquivo>
 ./bin/orion-dev check-messages
 ./bin/orion-dev check-queue <fila>
@@ -573,7 +571,7 @@ go build -o bin/orion-dev cmd/main.go
 # 2. Iniciar ambiente
 ./bin/orion-dev start
 
-# 3. Iniciar proxy Service Bus (terminal separado)
+# 3. Iniciar proxy Service Bus
 ./bin/orion-dev proxy
 
 # 4. Desenvolver (editar arquivos)
@@ -694,13 +692,13 @@ docker-compose logs -f sqledge
 #### 0. Service Bus não conecta (Proxy não iniciado)
 
 ```bash
-# Erro: "connection refused" ou "timeout" em comandos de mensagens
+# Erro: "connection refused" ou "timeout" ou "context deadline exceeded" em comandos de mensagens
 # Solução: Iniciar o proxy Service Bus
 
 # 1. Verificar se o proxy está rodando
 lsof -i :5671
 
-# 2. Iniciar proxy em terminal separado
+# 2. Iniciar proxy Service Bus
 ./bin/orion-dev proxy
 
 # 3. Testar conectividade
@@ -840,7 +838,7 @@ lsof -i :5671
 # Verificar se o Service Bus Emulator está rodando
 lsof -i :5672
 
-# Iniciar proxy em terminal separado
+# Iniciar proxy Service Bus
 ./bin/orion-dev proxy
 
 # Verificar conectividade
@@ -1089,7 +1087,7 @@ O projeto inclui **Dependabot** configurado para:
 1. **Compilar aplicação**: `go build -o bin/orion-dev cmd/main.go`
 2. **Configurar ambiente**: `./bin/orion-dev setup`
 3. **Iniciar serviços**: `./bin/orion-dev start`
-4. **Iniciar proxy Service Bus**: `./bin/orion-dev proxy` (terminal separado)
+4. **Iniciar proxy Service Bus**: `./bin/orion-dev proxy`
 5. **Testar funcionalidade**: `./bin/orion-dev check-messages`
 6. **Enviar mensagens**: `./bin/orion-dev push-message sbq.pismo.transaction.creation test.json`
 7. **Monitorar logs**: `docker-compose logs -f`
