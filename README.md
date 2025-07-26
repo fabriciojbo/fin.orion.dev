@@ -973,8 +973,8 @@ Cada binário inclui um arquivo `.sha256` para verificação:
 
 ```bash
 # Download
-wget https://github.com/user/repo/releases/download/v1.2.3/orion-dev-linux-amd64
-wget https://github.com/user/repo/releases/download/v1.2.3/orion-dev-linux-amd64.sha256
+wget https://github.com/fabriciojbo/fin.orion.dev/releases/download/v1.0.3/orion-dev-linux-amd64
+wget https://github.com/fabriciojbo/fin.orion.dev/releases/download/v1.0.3/orion-dev-linux-amd64.sha256
 
 # Verificar
 sha256sum -c orion-dev-linux-amd64.sha256
