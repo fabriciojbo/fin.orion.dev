@@ -118,6 +118,8 @@ Fin.Orion.Dev/
 │   └── main.go                       # Arquivo principal
 ├── 📁 internal/                      # Código interno da aplicação
 │   ├── commands/                     # Comandos CLI
+│   │   ├── commitlint.go             # Comando commitlint
+│   │   ├── environment.go            # Comando environment
 │   │   ├── root.go                   # Comando raiz
 │   │   ├── setup.go                  # Comando setup
 │   │   ├── start.go                  # Comando start
@@ -131,7 +133,8 @@ Fin.Orion.Dev/
 │   ├── servicebus/                   # Service Bus
 │   │   └── client.go                 # Cliente Azure Service Bus
 │   └── utils/                        # Utilitários
-│       └── network.go                # Funções de rede
+│   │   ├── json.go                   # Funções de JSON
+│   │   └── network.go                # Funções de rede
 ├── 📁 docker/                        # Configurações Docker
 │   ├── container/
 │   │   ├── Dockerfile.api            # Orion API
