@@ -1,0 +1,65 @@
+# Dockerfile para desenvolvimento
+FROM node:18-alpine
+
+# Configurações do Node.js
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+ENV NODE_OPTIONS=--no-warnings
+
+# Instalar dependências do sistema necessárias
+RUN apk add --no-cache \
+    bash \
+    curl \
+    wget \
+    gnupg \
+    lsb-release \
+    python3 \
+    make \
+    g++ \
+    git \
+    openssl \
+    libssl3 \
+    socat \
+    stunnel \
+    iputils \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+# Adicionar configuração do stunnel
+RUN cat <<EOF > /etc/stunnel/stunnel.conf
+foreground = yes
+debug = 0
+output = /dev/null
+
+[servicebus]
+accept = 5671
+connect = sb-emulator:5672
+cert = /etc/stunnel/stunnel.pem
+EOF
+
+# Criar diretórios e certificados autoassinados para o stunnel
+RUN mkdir -p /etc/stunnel && \
+    openssl req -new -x509 -days 365 -nodes \
+    -subj "/C=BR/ST=SP/L=Local/O=Dev/CN=localhost" \
+    -out /etc/stunnel/stunnel.pem \
+    -keyout /etc/stunnel/stunnel.pem
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar código fonte
+COPY . .
+
+# Remover node_modules existente
+RUN rm -rf node_modules
+
+# Instalar pnpm globalmente
+RUN npm install -g pnpm
+
+# Instalar todas as dependências (incluindo devDependencies para desenvolvimento)
+RUN pnpm install
+
+# Expor porta
+EXPOSE 3333
+
+# Comando para iniciar a aplicação em modo desenvolvimento
+CMD bash -c "socat TCP-LISTEN:5672,fork TCP:sb-emulator:5672 & sleep 1 && stunnel /etc/stunnel/stunnel.conf & pnpm run start:dev"

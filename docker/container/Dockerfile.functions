@@ -1,0 +1,82 @@
+# Dockerfile para Orion Functions
+FROM ubuntu:22.04
+
+# Evitar prompts interativos durante a instalação
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Configurações do Node.js
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+ENV NODE_OPTIONS=--no-warnings
+
+# Instalar dependências do sistema
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    gnupg \
+    lsb-release \
+    python3 \
+    make \
+    g++ \
+    git \
+    openssl \
+    libssl3 \
+    socat \
+    stunnel4 \
+    iputils-ping \
+    libunwind8 \
+    libicu-dev \
+    icu-devtools \
+    ca-certificates
+
+# Adicionar configuração do stunnel
+RUN cat <<EOF > /etc/stunnel/stunnel.conf
+foreground = yes
+debug = 0
+output = /dev/null
+
+[servicebus]
+accept = 5671
+connect = sb-emulator:5672
+cert = /etc/stunnel/stunnel.pem
+EOF
+
+# Criar diretórios e certificados autoassinados para o stunnel
+RUN mkdir -p /etc/stunnel && \
+    openssl req -new -x509 -days 365 -nodes \
+    -subj "/C=BR/ST=SP/L=Local/O=Dev/CN=localhost" \
+    -out /etc/stunnel/stunnel.pem \
+    -keyout /etc/stunnel/stunnel.pem
+
+# Instalar Node.js 18 (método oficial)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get update && \
+    apt-get install -y nodejs
+
+# Instalar Azure Functions Core Tools 4 (método oficial)
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg && \
+    mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg && \
+    sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list' && \
+    apt-get update && \
+    apt-get install -y azure-functions-core-tools-4 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar código fonte
+COPY . .
+
+# Remover node_modules
+RUN rm -rf node_modules
+
+# Instalar pnpm globalmente
+RUN npm install -g pnpm
+
+# Instalar dependências
+RUN pnpm install
+
+# Expor porta
+EXPOSE 7071
+
+# Comando para iniciar as functions
+CMD bash -c "socat TCP-LISTEN:5672,fork TCP:sb-emulator:5672 & sleep 1 && stunnel /etc/stunnel/stunnel.conf & pnpm run start:dev"

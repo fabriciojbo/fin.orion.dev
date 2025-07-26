@@ -1,0 +1,314 @@
+# ===========================================
+# Fin.Orion.Dev - Ambiente de Desenvolvimento
+# ===========================================
+
+# ===========================================
+# Arquivos de Configuração Sensíveis
+# ===========================================
+
+# Configurações locais (podem conter dados sensíveis)
+local.settings.json
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Configurações específicas do usuário
+*.local
+local.*
+
+# ===========================================
+# Dependências e Pacotes
+# ===========================================
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# Logs de instalação
+*.log
+logs/
+*.log.*
+
+# ===========================================
+# Arquivos de Build e Cache
+# ===========================================
+
+# Build artifacts
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vuepress/dist
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# TypeScript
+*.tsbuildinfo
+
+# ===========================================
+# Docker e Containers
+# ===========================================
+
+# Volumes Docker
+docker-volumes/
+volumes/
+
+# Imagens Docker locais
+*.tar
+*.tar.gz
+
+# Docker Compose override files
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+
+# ===========================================
+# Banco de Dados
+# ===========================================
+
+# Arquivos de banco de dados
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Dumps de banco
+*.sql
+!docker/database/init-*.sql
+
+# ===========================================
+# Logs e Arquivos Temporários
+# ===========================================
+
+# Logs do sistema
+*.log
+*.out
+*.pid
+*.seed
+*.pid.lock
+
+# Arquivos temporários
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Arquivos de swap
+*.swp
+*.swo
+*~
+
+# ===========================================
+# IDEs e Editores
+# ===========================================
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+.vim/
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===========================================
+# Sistema Operacional
+# ===========================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===========================================
+# Testes e Coverage
+# ===========================================
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output/
+
+# Test results
+test-results/
+junit.xml
+test-report.xml
+
+# ===========================================
+# Azure Functions
+# ===========================================
+
+# Azure Functions local settings
+local.settings.json
+host.json.local
+
+# Azure Functions runtime
+.azure/
+
+# ===========================================
+# Mensagens e Dados de Teste
+# ===========================================
+
+# Arquivos de mensagem temporários
+messages/temp/
+messages/*.tmp
+messages/*.temp
+
+# Dados de teste sensíveis
+test-data/
+sample-data/
+!messages/*.json
+
+# ===========================================
+# Scripts e Automação
+# ===========================================
+
+# Scripts temporários
+scripts/temp/
+scripts/*.tmp
+scripts/*.temp
+
+# Arquivos de backup
+*.bak
+*.backup
+*.old
+
+# ===========================================
+# Monitoramento e Observabilidade
+# ===========================================
+
+# Logs de aplicação
+app-logs/
+application-logs/
+*.app.log
+
+# Métricas e telemetria
+metrics/
+telemetry/
+*.metrics
+
+# ===========================================
+# Segurança e Certificados
+# ===========================================
+
+# Certificados e chaves
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.p12
+*.pfx
+
+# Arquivos de configuração de segurança
+security/
+secrets/
+*.secret
+
+# ===========================================
+# Arquivos Específicos do Projeto
+# ===========================================
+
+# Arquivos de configuração específicos do usuário
+user-config/
+personal-config/
+
+# Arquivos de desenvolvimento local
+dev-files/
+local-files/
+
+
+# ===========================================
+# Comentários e Notas
+# ===========================================
+
+# Este .gitignore é específico para o ambiente Fin.Orion.Dev
+# Mantenha-o atualizado conforme o projeto evolui
+#
+# Para adicionar novos padrões:
+# 1. Adicione na seção apropriada
+# 2. Documente o motivo
+# 3. Teste com 'git status' antes de commitar
+
+messages/*.json
+
+# pnpm
+pnpm-lock.yaml
+
+# SQL
+*.sql
+
+# Binário não versionado
+bin/orion-dev
+bin/orion-dev.*

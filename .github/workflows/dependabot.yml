@@ -1,0 +1,86 @@
+name: Dependabot
+
+on:
+  schedule:
+    # Executar toda segunda-feira às 9:00 UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-deps:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Check for updates
+        id: check
+        run: |
+          echo "Checking for dependency updates..."
+          go list -u -m all | grep -E '\[.*\]' || echo "No updates available"
+
+          # Check if there are any updates
+          if go list -u -m all | grep -q '\[.*\]'; then
+            echo "updates=true" >> $GITHUB_OUTPUT
+          else
+            echo "updates=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update dependencies
+        if: steps.check.outputs.updates == 'true'
+        run: |
+          echo "Updating dependencies..."
+          go get -u ./...
+          go mod tidy
+          go mod download
+
+      - name: Run tests
+        if: steps.check.outputs.updates == 'true'
+        run: |
+          echo "Running tests with updated dependencies..."
+          go test -v ./...
+
+      - name: Create Pull Request
+        if: steps.check.outputs.updates == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update dependencies'
+          title: 'chore(deps): update dependencies'
+          body: |
+            ## 🔄 Dependency Updates
+
+            This PR updates the project dependencies to their latest versions.
+
+            ### Changes
+            - Updated Go dependencies to latest compatible versions
+            - Ran tests to ensure compatibility
+            - Updated go.mod and go.sum files
+
+            ### Testing
+            - [x] All tests pass
+            - [x] Build successful
+            - [x] No breaking changes detected
+
+            ### Next Steps
+            - Review the changes
+            - Test locally if needed
+            - Merge if everything looks good
+
+            ---
+
+            *This PR was automatically created by GitHub Actions*
+          branch: dependabot/update-dependencies
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+            chore

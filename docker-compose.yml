@@ -1,0 +1,139 @@
+name: finoriondev
+services:
+  orion-api:
+    build:
+      context: ../Fin.Orion.API/source
+      dockerfile: Dockerfile
+    container_name: 'orion-api'
+    ports:
+      - '3333:3333'
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ../Fin.Orion.API/source:/app
+      - ./.env:/app/.env
+      - /app/node_modules
+    depends_on:
+      - emulator
+      - sqledge
+      - postgres
+      - azure-storage
+    networks:
+      orion-network:
+        aliases:
+          - 'orion-api'
+
+  orion-functions:
+    build:
+      context: ../Fin.Orion.Functions/source
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+    container_name: 'orion-functions'
+    platform: linux/amd64
+    ports:
+      - '7071:7071'
+    environment:
+      - NODE_ENV=development
+      - FUNCTIONS_WORKER_RUNTIME=node
+      - FUNCTIONS_WORKER_RUNTIME_VERSION=18
+      - FUNCTIONS_EXTENSION_VERSION=~4
+      - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azure-storage:10000/devstoreaccount1;QueueEndpoint=http://azure-storage:10001/devstoreaccount1;TableEndpoint=http://azure-storage:10002/devstoreaccount1;
+    volumes:
+      - ../Fin.Orion.Functions/source:/app
+      - ./local.settings.json:/app/local.settings.json
+      - /app/node_modules
+    depends_on:
+      - orion-api
+      - emulator
+      - sqledge
+      - azure-storage
+    networks:
+      orion-network:
+        aliases:
+          - 'orion-functions'
+
+  emulator:
+    container_name: 'servicebus'
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    pull_policy: always
+    volumes:
+      - ./docker/service-bus/config.json:/ServiceBus_Emulator/ConfigFiles/Config.json
+    ports:
+      - '5672:5672'
+      - '5300:5300'
+    environment:
+      SQL_SERVER: sqledge
+      ACCEPT_EULA: '${ACCEPT_EULA}'
+      MSSQL_SA_PASSWORD: '${MSSQL_SA_PASSWORD}'
+      SQL_WAIT_INTERVAL: 3
+    depends_on:
+      - sqledge
+    networks:
+      orion-network:
+        aliases:
+          - 'sb-emulator'
+
+  sqledge:
+    container_name: 'sqledge'
+    image: 'mcr.microsoft.com/azure-sql-edge:latest'
+    environment:
+      ACCEPT_EULA: '${ACCEPT_EULA}'
+      MSSQL_SA_PASSWORD: '${MSSQL_SA_PASSWORD}'
+    volumes:
+      - sqledge-data:/var/opt/mssql
+    ports:
+      - '1433:1433'
+    networks:
+      orion-network:
+        aliases:
+          - 'sqledge'
+
+  azure-storage:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: azure-storage
+    ports:
+      - '10000:10000'
+      - '10001:10001'
+      - '10002:10002'
+    environment:
+      - AZURITE_ACCOUNTS=devstoreaccount1:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+    volumes:
+      - azure-storage-data:/data
+    networks:
+      orion-network:
+        aliases:
+          - 'azure-storage'
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: database
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=${PG_USERNAME}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DATABASE}
+      - POSTGRES_INITDB_ARGS=--locale=en_US.UTF-8
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/database/certs/server.crt:/var/lib/postgresql/server.crt:ro
+      - ./docker/database/certs/server.key:/var/lib/postgresql/server.key:ro
+      - ./docker/database/postgres.conf:/etc/postgresql/postgresql.conf:ro
+      - ./docker/database/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
+    command: ['postgres', '-c', 'config_file=/etc/postgresql/postgresql.conf']
+    networks:
+      orion-network:
+        aliases:
+          - 'orion-database'
+
+networks:
+  orion-network:
+
+volumes:
+  azure-storage-data:
+    driver: local
+  sqledge-data:
+    driver: local
+  postgres-data:
+    driver: local
