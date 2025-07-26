@@ -180,7 +180,7 @@ jobs:
             sha256sum -c orion-dev-linux-amd64.sha256
             chmod +x orion-dev-linux-amd64
             # Move to /home/your_username/fin.orion.dev/bin
-            sudo mv orion-dev-linux-amd64 /home/your_username/fin.orion.dev/bin/orion-dev
+            mv orion-dev-linux-amd64 /home/your_username/fin.orion.dev/bin/orion-dev
             # Test
             cd /home/your_username/fin.orion.dev
             ./bin/orion-dev --version
