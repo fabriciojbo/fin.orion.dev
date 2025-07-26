@@ -179,6 +179,11 @@ jobs:
             wget https://github.com/${{ github.repository }}/releases/download/${{ steps.changelog.outputs.version }}/orion-dev-linux-amd64.sha256
             sha256sum -c orion-dev-linux-amd64.sha256
             chmod +x orion-dev-linux-amd64
+            # Move to /home/your_username/fin.orion.dev/bin
+            sudo mv orion-dev-linux-amd64 /home/your_username/fin.orion.dev/bin/orion-dev
+            # Test
+            cd /home/your_username/fin.orion.dev
+            ./bin/orion-dev --version
             ```
           files: artifacts/**/*
           draft: false

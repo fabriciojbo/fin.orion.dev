@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fin.orion.dev/internal/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -12,6 +13,14 @@ var rootCmd = &cobra.Command{
 Este CLI fornece comandos para gerenciar o ambiente de desenvolvimento,
 enviar mensagens para filas e tópicos do Service Bus, e monitorar
 o status dos serviços.`,
+	Version: utils.GetVersionOrUnknown(),
+	Run: func(cmd *cobra.Command, args []string) {
+		// Se não houver argumentos, mostrar ajuda
+		if len(args) == 0 {
+			cmd.Help()
+			return
+		}
+	},
 }
 
 // Execute adiciona todos os comandos filhos ao comando raiz e configura flags
