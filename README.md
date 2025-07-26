@@ -134,7 +134,8 @@ Fin.Orion.Dev/
 │   │   └── client.go                 # Cliente Azure Service Bus
 │   └── utils/                        # Utilitários
 │   │   ├── json.go                   # Funções de JSON
-│   │   └── network.go                # Funções de rede
+│   │   ├── network.go                # Funções de rede
+│   │   └── version.go                # Funções de versão
 ├── 📁 docker/                        # Configurações Docker
 │   ├── container/
 │   │   ├── Dockerfile.api            # Orion API
