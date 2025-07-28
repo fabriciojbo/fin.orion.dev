@@ -4,9 +4,9 @@ services:
     build:
       context: ../Fin.Orion.API/source
       dockerfile: Dockerfile
-    container_name: 'orion-api'
+    container_name: "orion-api"
     ports:
-      - '3333:3333'
+      - "3333:3333"
     environment:
       - NODE_ENV=development
     volumes:
@@ -21,7 +21,7 @@ services:
     networks:
       orion-network:
         aliases:
-          - 'orion-api'
+          - "orion-api"
 
   orion-functions:
     build:
@@ -29,10 +29,10 @@ services:
       dockerfile: Dockerfile
       platforms:
         - linux/amd64
-    container_name: 'orion-functions'
+    container_name: "orion-functions"
     platform: linux/amd64
     ports:
-      - '7071:7071'
+      - "7071:7071"
     environment:
       - NODE_ENV=development
       - FUNCTIONS_WORKER_RUNTIME=node
@@ -51,51 +51,52 @@ services:
     networks:
       orion-network:
         aliases:
-          - 'orion-functions'
+          - "orion-functions"
 
   emulator:
-    container_name: 'servicebus'
+    container_name: "servicebus"
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
     pull_policy: always
     volumes:
       - ./docker/service-bus/config.json:/ServiceBus_Emulator/ConfigFiles/Config.json
     ports:
-      - '5672:5672'
-      - '5300:5300'
+      - "5672:5672"
+      - "5300:5300"
     environment:
       SQL_SERVER: sqledge
-      ACCEPT_EULA: '${ACCEPT_EULA}'
-      MSSQL_SA_PASSWORD: '${MSSQL_SA_PASSWORD}'
+      ACCEPT_EULA: "${ACCEPT_EULA}"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
       SQL_WAIT_INTERVAL: 3
     depends_on:
       - sqledge
     networks:
       orion-network:
         aliases:
-          - 'sb-emulator'
+          - "sb-emulator"
 
   sqledge:
-    container_name: 'sqledge'
-    image: 'mcr.microsoft.com/azure-sql-edge:latest'
+    container_name: "sqledge"
+    image: "mcr.microsoft.com/azure-sql-edge:latest"
     environment:
-      ACCEPT_EULA: '${ACCEPT_EULA}'
-      MSSQL_SA_PASSWORD: '${MSSQL_SA_PASSWORD}'
+      ACCEPT_EULA: "${ACCEPT_EULA}"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
     volumes:
       - sqledge-data:/var/opt/mssql
+      - ./docker/database/mssql.conf:/var/opt/mssql/mssql.conf:ro
     ports:
-      - '1433:1433'
+      - "1433:1433"
     networks:
       orion-network:
         aliases:
-          - 'sqledge'
+          - "sqledge"
 
   azure-storage:
     image: mcr.microsoft.com/azure-storage/azurite:latest
     container_name: azure-storage
     ports:
-      - '10000:10000'
-      - '10001:10001'
-      - '10002:10002'
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
     environment:
       - AZURITE_ACCOUNTS=devstoreaccount1:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
     volumes:
@@ -103,13 +104,13 @@ services:
     networks:
       orion-network:
         aliases:
-          - 'azure-storage'
+          - "azure-storage"
 
   postgres:
     image: postgres:15-alpine
     container_name: database
     ports:
-      - '5432:5432'
+      - "5432:5432"
     environment:
       - POSTGRES_USER=${PG_USERNAME}
       - POSTGRES_PASSWORD=${PG_PASSWORD}
@@ -121,11 +122,11 @@ services:
       - ./docker/database/certs/server.key:/var/lib/postgresql/server.key:ro
       - ./docker/database/postgres.conf:/etc/postgresql/postgresql.conf:ro
       - ./docker/database/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
-    command: ['postgres', '-c', 'config_file=/etc/postgresql/postgresql.conf']
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
     networks:
       orion-network:
         aliases:
-          - 'orion-database'
+          - "orion-database"
 
 networks:
   orion-network:
@@ -133,7 +134,7 @@ networks:
 volumes:
   azure-storage-data:
     driver: local
-  sqledge-data:
-    driver: local
   postgres-data:
+    driver: local
+  sqledge-data:
     driver: local
